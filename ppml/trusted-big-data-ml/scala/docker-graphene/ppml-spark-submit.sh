@@ -38,15 +38,14 @@ if [ $secure_password ]; then
     -Dspark.ssl.trustStore=/ppml/trusted-big-data-ml/work/keys/keystore.jks \
     -Dspark.ssl.trustStorePassword=$secure_password \
     -Dspark.ssl.trustStoreType=JKS"
-else 
+else
    SSL=""
 fi
 
 set -x
 
-SGX=1 ./pal_loader ${JAVA_HOME}/bin/java $SSL \
+./pal_loader ${JAVA_HOME}/bin/java $SSL \
         -XX:ActiveProcessorCount=24 \
         -cp "/ppml/trusted-big-data-ml/work/bigdl-jar-with-dependencies.jar:${SPARK_HOME}/conf/:${SPARK_HOME}/jars/*" \
         -Xmx${DRIVER_MEMORY} \
         org.apache.spark.deploy.SparkSubmit "$@"
-

@@ -13,7 +13,7 @@ RUN cd /graphene/Pal/src/host/Linux-SGX && \
     git checkout DCAP_1.7 && \
     cp -r driver/linux/* .
 RUN cd /graphene && \
-    ISGX_DRIVER_PATH=/graphene/Pal/src/host/Linux-SGX/linux-sgx-driver make -s -j4 SGX=1 WERROR=1 && true
+    ISGX_DRIVER_PATH=/graphene/Pal/src/host/Linux-SGX/linux-sgx-driver make -s -j4 WERROR=1 && true
 RUN for f in $(find /graphene/Runtime -type l); do cp --remove-destination $(realpath $f) $f; done
 
 # stage.2 jdk & spark
@@ -60,11 +60,11 @@ RUN git clone https://github.com/intel-analytics/BigDL.git && \
     cd BigDL && \
     git apply /bigdl.lenet.training.patch && \
     git status && \
-    export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m \
-        -Dhttp.proxyHost=$HTTP_PROXY_HOST \
-        -Dhttp.proxyPort=$HTTP_PROXY_PORT \
-        -Dhttps.proxyHost=$HTTPS_PROXY_HOST \
-        -Dhttps.proxyPort=$HTTPS_PROXY_PORT" && \
+    export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1g \
+    -Dhttp.proxyHost=$HTTP_PROXY_HOST \
+    -Dhttp.proxyPort=$HTTP_PROXY_PORT \
+    -Dhttps.proxyHost=$HTTPS_PROXY_HOST \
+    -Dhttps.proxyPort=$HTTPS_PROXY_PORT" && \
     bash make-dist.sh -P spark_2.x
 
 # stage.4 analytics-zoo
@@ -122,7 +122,7 @@ COPY --from=graphene /graphene/Scripts /graphene/Scripts
 COPY --from=graphene /graphene/Runtime/ /graphene/Runtime
 COPY --from=graphene /graphene/python /graphene/python
 COPY --from=graphene /graphene/Pal /graphene/Pal
-COPY --from=graphene /graphene/Pal/src/host/Linux-SGX/generated_offsets.py /graphene/python/
+#COPY --from=graphene /graphene/Pal/src/host/Linux-SGX/generated_offsets.py /graphene/python/
 COPY --from=graphene /graphene/Examples/common_tools/get_deps.sh /graphene/get_deps.sh
 COPY --from=graphene /graphene/Tools/argv_serializer /graphene/Tools
 COPY --from=spark /opt/jdk  /opt/jdk8
@@ -154,4 +154,3 @@ RUN chmod a+x /ppml/trusted-big-data-ml/init.sh && \
     chmod a+x /ppml/trusted-big-data-ml/start-spark-standalone-driver-sgx.sh && \
     chmod a+x /ppml/trusted-big-data-ml/distributed-check-status.sh && \
     chmod a+x /ppml/trusted-big-data-ml/check-status.sh
-   

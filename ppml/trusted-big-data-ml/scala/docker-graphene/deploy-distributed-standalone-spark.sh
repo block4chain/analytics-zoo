@@ -39,10 +39,6 @@ ssh root@$MASTER "docker run -itd \
       --net=host \
       --cpuset-cpus="0-1" \
       --oom-kill-disable \
-      --device=/dev/gsgx \
-      --device=/dev/sgx/enclave \
-      --device=/dev/sgx/provision \
-      -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket \
       -v $ENCLAVE_KEY_PATH:/graphene/Pal/src/host/Linux-SGX/signer/enclave-key.pem \
       -v $KEYS_PATH:/ppml/trusted-big-data-ml/work/keys \
       -v $SECURE_PASSWORD_PATH:/ppml/trusted-big-data-ml/work/password \
@@ -89,4 +85,3 @@ for worker in ${WORKERS[@]}
   done
 
 ./distributed-check-status.sh
-
